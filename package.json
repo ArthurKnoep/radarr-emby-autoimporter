@@ -1,0 +1,17 @@
+{
+  "name": "radarr-emby-autoimporter",
+  "version": "1.0.0",
+  "description": "A node script to autoimport movies from emby to radarr",
+  "main": "index.js",
+  "repository": "git@github.com:ArthurKnoep/radarr-emby-autoimporter.git",
+  "author": "Arthur Knoepflin <arthur@knoepflin.eu>",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "chalk": "^4.0.0",
+    "debug": "^4.1.1",
+    "dotenv": "^8.2.0",
+    "enquirer": "^2.3.4",
+    "strip-path": "^1.0.0"
+  }
+}
