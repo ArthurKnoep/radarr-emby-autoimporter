@@ -14,7 +14,7 @@ class AutoImporter {
                 this._mediaServer = new Emby(mediaServerPublicUrl, mediaServerApiKey, mediaServerStripPath);
                 break
             case "plex":
-                this._mediaServer = new Plex(mediaServerPublicUrl, mediaServerApiKey);
+                this._mediaServer = new Plex(mediaServerPublicUrl, mediaServerApiKey, mediaServerStripPath);
         }
         this._radarr = new Radarr(radarrPublicUrl, radarrApiKey, radarrStripPath);
         this._radarrStipPath = radarrStripPath;
