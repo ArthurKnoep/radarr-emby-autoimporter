@@ -4,6 +4,8 @@ const stripPath = require('strip-path');
 const path = require('path');
 
 class Emby {
+    name = "Emby";
+
     constructor(publicUrl, apiKey, stripPath) {
         const baseUrl = new URL(publicUrl);
         baseUrl.pathname = path.join(baseUrl.pathname, 'emby');
@@ -23,14 +25,14 @@ class Emby {
 
     async listMovies() {
         console.log(chalk.green('Emby'), `Searching for movies`);
-        const {data: items} = await this._requester.get('/Items', {
+        const { data: items } = await this._requester.get('/Items', {
             params: {
                 Recursive: true,
                 IncludeItemTypes: "Movie",
                 Fields: "Name,Path,ProviderIds,ParentId",
             }
         });
-        console.log(chalk.green('Emby'), `Found ${items.TotalRecordCount} ${items.TotalRecordCount > 1 ? 'movies': 'movie'}`);
+        console.log(chalk.green('Emby'), `Found ${items.TotalRecordCount} ${items.TotalRecordCount > 1 ? 'movies' : 'movie'}`);
         const itemsSelected = [];
         for (let i = 0; items.Items[i]; i++) {
             const item = items.Items[i];

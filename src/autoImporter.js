@@ -3,11 +3,19 @@ const debug = require('debug')('importer');
 const { prompt } = require('enquirer');
 const path = require('path');
 const Emby = require('./emby');
+const Plex = require('./plex');
 const Radarr = require('./radarr');
 
 class AutoImporter {
-    constructor(embyPublicUrl, embyApiKey, embyStripPath, radarrPublicUrl, radarrApiKey, radarrStripPath) {
-        this._emby = new Emby(embyPublicUrl, embyApiKey, embyStripPath);
+    constructor(mediaServerType, mediaServerPublicUrl, mediaServerApiKey, mediaServerStripPath,
+        radarrPublicUrl, radarrApiKey, radarrStripPath) {
+        switch (mediaServerType.toLowerCase()) {
+            case "emby":
+                this._mediaServer = new Emby(mediaServerPublicUrl, mediaServerApiKey, mediaServerStripPath);
+                break
+            case "plex":
+                this._mediaServer = new Plex(mediaServerPublicUrl, mediaServerApiKey);
+        }
         this._radarr = new Radarr(radarrPublicUrl, radarrApiKey, radarrStripPath);
         this._radarrStipPath = radarrStripPath;
         this._qualityProfileId = 0;
@@ -24,12 +32,14 @@ class AutoImporter {
         }
         let movies;
         try {
-            movies = await this._emby.listMovies();
+            movies = await this._mediaServer.listMovies();
         } catch (e) {
+            console.log(e)
             debug('Could not get the movie list');
             debug(e);
             return;
         }
+        let batchRadarrImport = []
         for (let i = 0; movies[i]; i++) {
             const radarrMovie = await this._radarr.searchMovieByPath(movies[i].path);
             if (!radarrMovie) {
@@ -60,18 +70,23 @@ class AutoImporter {
                 tmpMovie.qualityProfileId = this._qualityProfileId;
                 tmpMovie.monitored = this._monitored;
                 tmpMovie.minimumAvailability = this._minimumAvailability;
-                await this._radarr.import([tmpMovie]);
+                batchRadarrImport.push(tmpMovie)
+                if (batchRadarrImport.length >= 20) {
+                    await this._radarr.import(batchRadarrImport);
+                    batchRadarrImport = []
+                }
             }
         }
+        if (batchRadarrImport.length != 0) await this._radarr.import(batchRadarrImport);
     }
 
     async verifyConnection() {
-        process.stdout.write('Verifying Emby connection:\t');
+        process.stdout.write(`Verifying ${this._mediaServer.name} connection:\t`);
         try {
-            await this._emby.ping();
+            await this._mediaServer.ping();
         } catch (e) {
             console.log(chalk.red('❌'));
-            debug('Could not connect to Emby');
+            debug(`Could not connect to ${this._mediaServer.name}`);
             debug(e);
             return Promise.reject();
         }
