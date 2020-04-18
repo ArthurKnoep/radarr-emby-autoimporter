@@ -1,5 +1,6 @@
 const chalk = require('chalk');
 const debug = require('debug')('importer');
+const onDeath = require('death');
 const { prompt } = require('enquirer');
 const path = require('path');
 const Emby = require('./emby');
@@ -34,12 +35,15 @@ class AutoImporter {
         try {
             movies = await this._mediaServer.listMovies();
         } catch (e) {
-            console.log(e)
             debug('Could not get the movie list');
             debug(e);
             return;
         }
         let batchRadarrImport = []
+        const offDeath = onDeath(async (signal) => {
+            console.log(chalk.blue('Radarr'), `Caught ${signal}, stopping...`);
+            await this._radarr.import(batchRadarrImport);
+        })
         for (let i = 0; movies[i]; i++) {
             const radarrMovie = await this._radarr.searchMovieByPath(movies[i].path);
             if (!radarrMovie) {
@@ -78,6 +82,7 @@ class AutoImporter {
             }
         }
         if (batchRadarrImport.length != 0) await this._radarr.import(batchRadarrImport);
+        offDeath();
     }
 
     async verifyConnection() {
