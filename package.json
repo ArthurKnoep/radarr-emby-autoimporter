@@ -9,6 +9,7 @@
   "dependencies": {
     "axios": "^0.19.2",
     "chalk": "^4.0.0",
+    "death": "^1.1.0",
     "debug": "^4.1.1",
     "dotenv": "^8.2.0",
     "enquirer": "^2.3.4",

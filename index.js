@@ -2,7 +2,10 @@ require('dotenv').config();
 const chalk = require('chalk');
 const AutoImporter = require('./src/autoImporter');
 
-const required_env = ['EMBY_PUBLIC_URL', 'EMBY_API_KEY', 'EMBY_STRIP_PATH', 'RADARR_PUBLIC_URL', 'RADARR_API_KEY', 'RADARR_STRIP_PATH'];
+const required_env = [
+    'MEDIA_SERVER_TYPE', 'MEDIA_SERVER_PUBLIC_URL', 'MEDIA_SERVER_API_KEY', 'MEDIA_SERVER_STRIP_PATH',
+    'RADARR_PUBLIC_URL', 'RADARR_API_KEY', 'RADARR_STRIP_PATH'
+];
 
 for (let i = 0; required_env[i]; i++) {
     if (!process.env[required_env[i]]) {
@@ -12,9 +15,10 @@ for (let i = 0; required_env[i]; i++) {
 }
 
 const importer = new AutoImporter(
-    process.env.EMBY_PUBLIC_URL,
-    process.env.EMBY_API_KEY,
-    process.env.EMBY_STRIP_PATH,
+    process.env.MEDIA_SERVER_TYPE,
+    process.env.MEDIA_SERVER_PUBLIC_URL,
+    process.env.MEDIA_SERVER_API_KEY,
+    process.env.MEDIA_SERVER_STRIP_PATH,
     process.env.RADARR_PUBLIC_URL,
     process.env.RADARR_API_KEY,
     process.env.RADARR_STRIP_PATH
