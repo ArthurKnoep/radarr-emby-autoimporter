@@ -7,7 +7,7 @@
   "author": "Arthur Knoepflin <arthur@knoepflin.eu>",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "chalk": "^4.0.0",
     "debug": "^4.1.1",
     "dotenv": "^8.2.0",
